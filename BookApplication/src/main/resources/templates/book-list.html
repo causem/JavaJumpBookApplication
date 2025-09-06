@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista książek</title>
+</head>
+<body>
+<h1>Lista książek</h1>
+
+<a href="/books/new">Dodaj książkę</a>
+<ul>
+    <th:block th:each="book : ${books}">
+        <p>ID: <span th:text="${book.id}"></span></p>
+        <p>Tytuł: <span th:text="${book.title}"></span></p>
+        <p>Autor: <span th:text="${book.author}"></span></p>
+        <a th:href="@{/books/edit/{id}(id=${book.id})}">Edytuj</a>
+        <a th:href="@{/books/delete/{id}(id=${book.id})}">Usuń</a>
+        <hr>
+    </th:block>
+</ul>
+
+</body>
+</html>
