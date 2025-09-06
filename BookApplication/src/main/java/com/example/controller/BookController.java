@@ -5,57 +5,56 @@ import com.example.entity.BookEntity;
 import com.example.exception.BookNotFoundException;
 import com.example.mapper.BookMapper;
 import com.example.repository.BookRepository;
+import com.example.service.BookService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/books")
 public class BookController {
 
-    private final BookRepository bookRepository;
-    private final BookMapper bookMapper;
+    private final BookService bookService;
 
-    public BookController(BookRepository bookRepository, BookMapper bookMapper) {
-        this.bookRepository = bookRepository;
-        this.bookMapper = bookMapper;
-    }
 
     // GET all books
     @GetMapping
-    public List<BookDto> getAllBooks() {
-        return bookMapper.toDtoList(bookRepository.findAll());
+    public List<BookDto> getAll() {
+        return bookService.getAll();
     }
+
 
     // GET book by ID
     @GetMapping("/{id}")
-    public BookDto getBookById(@PathVariable Long id) {
-        BookEntity entity = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
-        return bookMapper.toDto(entity);
+    public BookDto getById(@PathVariable Long id) {
+        return bookService.getById(id); // <- DTO
     }
+
 
     // POST new book
     @PostMapping
-    public BookDto addBook(@RequestBody BookDto dto) {
-        BookEntity entity = bookMapper.toEntity(dto);
-        return bookMapper.toDto(bookRepository.save(entity));
+    public ResponseEntity<BookDto> create(@RequestBody BookDto dto) {
+        BookDto created = bookService.create(dto); // <- DTO in/out
+        return ResponseEntity
+                .created(URI.create("/api/books/" + created.getId()))
+                .body(created);
     }
+
 
     // PUT update book
     @PutMapping("/{id}")
-    public BookDto updateBook(@PathVariable Long id, @RequestBody BookDto updatedDto) {
-        return bookRepository.findById(id)
-                .map(entity -> {
-                    entity.setTitle(updatedDto.getTitle());
-                    entity.setAuthor(updatedDto.getAuthor());
-                    return bookMapper.toDto(bookRepository.save(entity));
-                })
-                .orElseThrow(() -> new BookNotFoundException(id));
+    public BookDto update(@PathVariable Long id, @RequestBody BookDto dto) {
+        return bookService.update(id, dto);
     }
 
     // DELETE book
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        bookRepository.deleteById(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        bookService.delete(id);
     }
 }

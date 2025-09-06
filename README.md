@@ -22,6 +22,17 @@ It uses **Spring Data JPA**, **H2 in-memory DB**, **Lombok**, **MapStruct**, and
 
 ---
 
+## Controllers: REST & Views (Thymeleaf)
+
+This app exposes two parallel controller layers:
+
+- **REST API** – JSON endpoints under `/api/books` (used by clients, Postman/cURL, front-ends).
+- **View controllers (Thymeleaf)** – server-rendered HTML pages under `/books` (+ home `/`).
+
+Both run in the same application process on port `8080`.
+
+---
+
 ## 🚀 Quick Start
 
 ```bash
