@@ -8,12 +8,15 @@
 <body>
 <h1>Dodaj książkę</h1>
 
-<form action="/books/add" method="post">
+<form action="/books/add" method="post" th:object="${book}">
     <label for="title">Tytuł:</label>
     <input type="text" id="title" name="title" required><br><br>
 
     <label for="author">Autor:</label>
     <input type="text" id="author" name="author" required><br><br>
+
+    <label for="publisherName">Wydawca:</label>
+    <input id="publisherName" type="text" th:field="*{publisherName}" required>
 
     <button type="submit">Dodaj książkę</button>
 </form>

@@ -14,6 +14,7 @@
         <p>ID: <span th:text="${book.id}"></span></p>
         <p>Tytuł: <span th:text="${book.title}"></span></p>
         <p>Autor: <span th:text="${book.author}"></span></p>
+        <p>Wydawca: <span th:text="${book.publisherName}"></span></p>
         <a th:href="@{/books/edit/{id}(id=${book.id})}">Edytuj</a>
         <a th:href="@{/books/delete/{id}(id=${book.id})}">Usuń</a>
         <hr>

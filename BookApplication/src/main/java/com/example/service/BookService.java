@@ -5,6 +5,7 @@ import com.example.entity.BookEntity;
 import com.example.exception.BookNotFoundException;
 import com.example.mapper.BookMapper;
 import com.example.repository.BookRepository;
+import com.example.repository.PublisherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,15 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final PublisherRepository publisherRepository;
     private final BookMapper bookMapper;
 
     @Transactional(readOnly = true)
     public List<BookDto> getAll() {
-        return bookMapper.toDtoList(bookRepository.findAll());
+        return bookRepository.findAll()
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -32,16 +37,16 @@ public class BookService {
 
     @Transactional
     public BookDto create(BookDto dto) {
-        BookEntity toSave = bookMapper.toEntity(dto);
-        toSave.setId(null);
-        return bookMapper.toDto(bookRepository.save(toSave));
+        BookEntity entity = bookMapper.toEntity(dto, publisherRepository);
+        entity.setId(null);
+        return bookMapper.toDto(bookRepository.save(entity));
     }
 
     @Transactional
     public BookDto update(Long id, BookDto dto) {
         BookEntity entity = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
-        bookMapper.updateEntityFromDto(dto, entity);
+        bookMapper.updateEntityFromDto(dto, entity, publisherRepository);
         return bookMapper.toDto(bookRepository.save(entity));
     }
 
